@@ -19,3 +19,9 @@ const Route = use('Route')
 Route.get('/', () => {
   return { greeting: 'Hello world in JSON' }
 })
+
+
+Route.group(() => {
+  Route.post('login', 'UserController.login')
+  Route.post('crear', 'UserController.store')
+}).prefix('usuarios')
