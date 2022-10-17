@@ -22,6 +22,9 @@ Route.get('/', () => {
 
 
 Route.group(() => {
+  Route.get('listar', 'UserController.index')
   Route.post('login', 'UserController.login')
   Route.post('crear', 'UserController.store')
+  Route.post('editar/:id', 'UserController.editarUsuario').middleware('auth')
+  Route.get('usuario/:id', 'UserController.listarUsuario').middleware('auth')
 }).prefix('usuarios')

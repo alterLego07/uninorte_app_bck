@@ -53,6 +53,66 @@ class UserController {
       return response
     }
   }
+
+  async index (){
+    const response = {}
+
+    try {
+      const usuarios = await User.all();
+      response.status = 200;
+      response.data = usuarios
+
+      return response
+    } catch (error) {
+      response.status = error.status ? error.status : 403
+      response.error = error.message
+      return response
+    }
+  }
+
+  async listarUsuario({params}){
+    const response = {}
+    const {id} = params
+
+    try {
+      const usuario = await User.find(id)
+      if(id){
+        response.status = 200;
+        response.data = usuario
+        return response
+      }else{
+        response.status = 404;
+        response.data = 'sin data'
+        return response
+      }
+    } catch (error) {
+      response.status = error.status ? error.status : 403
+      response.error = error.message
+      return response
+    }
+  }
+
+  async editarUsuario ({request, params}){
+    const response = {};
+    const {password} = request.all()
+    const {id} = params
+
+    try {
+      const trx = await Database.beginTransaction()
+      const usuario = await User.find(id)
+      usuario.password = password;
+      await usuario.save(trx)
+      await trx.commit()
+
+      response.status = 200
+      response.data = ' Actualizado id ' + id;
+      return response 
+    } catch (error) {
+      response.status = error.status ? error.status : 403
+      response.error = error.message
+      return response
+    }
+  }
 }
 
 module.exports = UserController
