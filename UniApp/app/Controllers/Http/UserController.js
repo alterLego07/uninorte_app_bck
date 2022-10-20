@@ -113,6 +113,7 @@ class UserController {
       return response
     }
   }
+
 }
 
 module.exports = UserController
