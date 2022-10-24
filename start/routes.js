@@ -22,9 +22,22 @@ Route.get('/', () => {
 
 
 Route.group(() => {
-  Route.get('listar', 'UserController.index')
+  Route.get('listar', 'UserController.index').middleware('auth')
   Route.post('login', 'UserController.login')
   Route.post('crear', 'UserController.store')
   Route.post('editar/:id', 'UserController.editarUsuario').middleware('auth')
   Route.get('usuario/:id', 'UserController.listarUsuario').middleware('auth')
 }).prefix('usuarios')
+
+Route.group(() => {
+  Route.get('listar', 'TipoDocumentoController.index').middleware('auth')
+  Route.post('crear', 'TipoDocumentoController.store').middleware('auth')
+  Route.post('editar/:id', 'TipoDocumentoController.editarDocumento').middleware('auth')
+}).prefix('tiposdocumentos');
+
+
+Route.group(() => {
+  Route.get('listar', 'AlumnoController.index').middleware('auth')
+  Route.post('crear', 'AlumnoController.store').middleware('auth')
+  Route.get('alumno/:id', 'AlumnoController.mostarAlumno').middleware('auth')
+}).prefix('alumnos');
