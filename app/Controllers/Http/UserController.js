@@ -15,7 +15,7 @@ class UserController {
     }
 
     try {
-      const token =  await auth.attempt(email, password)
+      const token =  await auth.withRefreshToken().attempt(email, password)
       response.status = 200
       response.data = token
       return response
