@@ -1,5 +1,6 @@
 'use strict'
 const User = use ('App/Models/User')
+const Alumno = use ('App/Models/Alumno')
 const Database = use('Database');
 
 
@@ -31,7 +32,7 @@ class UserController {
   async store ({request}){
     const response = {}
 
-    const {email, password, tipo_usuario} = request.all()
+    const {email, password, tipo_usuario, id_usuario} = request.all()
 
     try {
       const trx = await Database.beginTransaction();
@@ -39,7 +40,8 @@ class UserController {
         username : email,
         email: email, 
         password: password,
-        tipo_usuario: tipo_usuario
+        tipo_usuario: tipo_usuario,
+        id_usuario
       }, trx)
 
       await trx.commit(usuario);
@@ -107,6 +109,44 @@ class UserController {
       response.status = 200
       response.data = ' Actualizado id ' + id;
       return response 
+    } catch (error) {
+      response.status = error.status ? error.status : 403
+      response.error = error.message
+      return response
+    }
+  }
+
+
+  async getuserLogin ({auth}){
+    const response = {}
+    const login = await auth.getUser();
+    console.log(login)
+    try {
+      if(login.tipo_usuario == 'alumno'){
+        const info = await Alumno.find(login.id_usuario)
+        if(info){
+          response.status = 200;
+          response.data = info;
+          return response
+
+        }else{
+          response.status = 200;
+          response.data = 'sin data';
+          return response
+
+        }
+
+      }else if (login.tipo_usuario == 'docente'){
+        // buscaremos en docente..
+        response.status = 403;
+        response.error = 'sin modulos'
+        return response
+      }else{
+      // buscaremos en BACK_OFFICE..
+      response.status = 403;
+      response.error = 'sin modulos'
+      return response
+    }
     } catch (error) {
       response.status = error.status ? error.status : 403
       response.error = error.message
