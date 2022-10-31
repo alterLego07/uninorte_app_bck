@@ -27,6 +27,8 @@ Route.group(() => {
   Route.post('crear', 'UserController.store')
   Route.post('editar/:id', 'UserController.editarUsuario').middleware('auth')
   Route.get('usuario/:id', 'UserController.listarUsuario').middleware('auth')
+  Route.get('info', 'UserController.getuserLogin').middleware('auth')
+  
 }).prefix('usuarios')
 
 Route.group(() => {
