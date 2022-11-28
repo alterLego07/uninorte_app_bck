@@ -1,7 +1,8 @@
 'use strict'
 const Alumno = use ('App/Models/Alumno')
 const Database = use ('Database')
-const {validate} = use ('Validator')
+const { validate } = use('Validator')
+const Moment = use('moment')
 
 class AlumnoController {
   async store ({request, auth}){
@@ -78,10 +79,15 @@ class AlumnoController {
     const {id} = params
     const response = {}
     try {
-      const alumno = await Alumno.findOrFail(id)
+      // const alumno = await Alumno.findOrFail(id)
+      const alumno = await Database.select('a.*',
+        Database.raw('(SELECT s.descripcion FROM sexo s WHERE s.id_sexo = a.id_sexo) as sexo'),
+        Database.raw('(SELECT n.descripcion FROM nacionalidades n WHERE n.id_nacionalidad = a.id_nacionalidad) as nacionalidad'),
+        Database.raw('(SELECT t.descripcion FROM tipo_documento t WHERE t.id_tipo_documento = a.id_tipo_documento) as tipo_documento')
+                      ).table('alumnos as a').where('a.id_alumno', id)
       if(alumno){
         response.status = 200
-        response.data = alumno
+        response.data = alumno[0]
       }else{
         response.status = 404
         response.data = 'sin data'
